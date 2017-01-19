@@ -25,11 +25,13 @@ def get_movies_id(name):
 
     kinopois_info = requests.get(''.join([url,name]),headers = headers,timeout = TIMEOUT).content
     soup = BeautifulSoup(kinopois_info,'html.parser')
-    parse = soup.find('a',text=name)
-    if parse:
+    try:
+        parse = soup.find('a',text=name)
         id = parse['data-id']
         return id
-    else:
+
+    except (TypeError, KeyError):
+
         return None
 
 
@@ -44,11 +46,18 @@ def fetch_movie_info(movie_title):
         }
 
         kinopois_info = requests.get(''.join([url,id]), headers=headers, timeout=TIMEOUT).content
-        soup = BeautifulSoup(kinopois_info, 'html.parser')
-        rating = soup.find('span',{'class' : 'rating_ball'}).text
-        rating_count = soup.find('span',{'class' : 'ratingCount'}).text.replace(u'\xa0','')
+        try:
+            soup = BeautifulSoup(kinopois_info, 'html.parser')
+            rating = soup.find('span',{'class' : 'rating_ball'}).text
+            rating_count = soup.find('span',{'class' : 'ratingCount'}).text.replace(u'\xa0','')
+        except AttributeError:
+            return None,None
 
         return rating, rating_count
+
+    else :
+
+        return None,None
 
 
 def output_movies_to_console(movies):
@@ -70,15 +79,13 @@ if __name__ == '__main__':
     print ('Получаем данные с kinopoisk.ru.....')
 
     for counter,movie in enumerate(afisha_list,start=1):
-        try:
-            rating, rating_count = fetch_movie_info(movie['name'])
-            print('Фильм номер {}. Получаем данные rating- {}, rating_count {}'.format(counter,rating,rating_count))
+        rating, rating_count = fetch_movie_info(movie['name'])
+        if rating and rating_count:
             movie.update({
                 'rating' : rating ,
                 'rating_count' : rating_count
             })
-        except (TypeError,AttributeError):
-            print ('Не могу получить данные с сайта')
+        else:
             movie.update({
                 'rating': 0,
                 'rating_count': 0
@@ -86,5 +93,5 @@ if __name__ == '__main__':
 
 
 
-    movies = sorted(afisha_list,key= lambda movie: float(movie['rating']) and movie['count'], reverse=True)[:9]
+    movies = sorted(afisha_list,key= lambda movie: float(movie['rating']) and movie['count'], reverse=True)[:10]
     output_movies_to_console(movies)

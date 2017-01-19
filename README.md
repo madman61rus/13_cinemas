@@ -1,7 +1,17 @@
 # Cinemas
 
-[TODO. There will be project description]
+Данная программа получает список фильмов, идущих в данный момент в кинотеатрах,
+сортирует их по рейтингу и количеству кинотеатров, которые показывают фильм и
+выводит 10 фильмов с самым большим рейтингом
 
-# Project Goals
+### Запуск программы
 
-The code is written for educational purposes. Training course for web-developers - [DEVMAN.org](https://devman.org)
+Для запуска программы необходимо запустить cinemas.py
+
+```
+python cinemas.py
+```
+
+# Цели проекта
+
+Этот код написан в образовательных целях. Курс для веб-девелоперов - [DEVMAN.org](https://devman.org)
