@@ -34,29 +34,33 @@ def get_movies_id(name):
 
         return None
 
-
-def fetch_movie_info(movie_title):
-
+def fetch_kinopoisk_html(movie_title):
     id = get_movies_id(movie_title)
 
     if id:
         url = 'https://www.kinopoisk.ru/film/'
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:45.0) Gecko/20100101 Firefox/45.0'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:45.0) Gecko/20100101 Firefox/42.0'
         }
+        kinopois_info = requests.get(''.join([url, id]), headers=headers, timeout=TIMEOUT).content
+        return kinopois_info
+    else:
+        return None
 
-        kinopois_info = requests.get(''.join([url,id]), headers=headers, timeout=TIMEOUT).content
+def fetch_movie_info(movies_title):
+
+    kinopoisk_info = fetch_kinopoisk_html(movies_title)
+    if kinopoisk_info:
         try:
-            soup = BeautifulSoup(kinopois_info, 'html.parser')
+            soup = BeautifulSoup(kinopoisk_info, 'html.parser')
             rating = soup.find('span',{'class' : 'rating_ball'}).text
-            rating_count = soup.find('span',{'class' : 'ratingCount'}).text.replace(u'\xa0','')
+            voters_number = soup.find('span',{'class' : 'ratingCount'}).text.replace(u'\xa0','')
         except AttributeError:
             return None,None
 
-        return rating, rating_count
-
+        if rating and voters_number:
+            return rating, voters_number
     else :
-
         return None,None
 
 
@@ -75,10 +79,10 @@ if __name__ == '__main__':
     print ('Получаем данные с afisha.ru.....')
     afisha_page = fetch_afisha_page('http://www.afisha.ru/msk/schedule_cinema/')
     afisha_list = parse_afisha_list(afisha_page)
-
+    print (sorted(afisha_list, key= lambda movie: movie['count'], reverse=True)[:10])
     print ('Получаем данные с kinopoisk.ru.....')
 
-    for counter,movie in enumerate(afisha_list,start=1):
+    for movie in afisha_list:
         rating, rating_count = fetch_movie_info(movie['name'])
         if rating and rating_count:
             movie.update({
