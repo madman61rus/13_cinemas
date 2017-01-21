@@ -71,7 +71,7 @@ def output_movies_to_console(movies):
             movie['name'],
             movie['count'],
             movie['rating'],
-            movie['rating_count']
+            movie['voters_number']
         ))
 
 
@@ -83,16 +83,16 @@ if __name__ == '__main__':
     print ('Получаем данные с kinopoisk.ru.....')
 
     for movie in afisha_list:
-        rating, rating_count = fetch_movie_info(movie['name'])
-        if rating and rating_count:
+        rating, voters_number = fetch_movie_info(movie['name'])
+        if rating and voters_number:
             movie.update({
                 'rating' : rating ,
-                'rating_count' : rating_count
+                'voters_number' : voters_number
             })
         else:
             movie.update({
                 'rating': 0,
-                'rating_count': 0
+                'voters_number': 0
             })
 
 
