@@ -13,7 +13,7 @@ def parse_afisha_list(raw_html):
     movies_info = soup.find_all('div',{'class' : 'm-disp-table'})
     movies_dict = [{
         'name' : movie.find('a').text,
-        'count' : len(movie.parent.find_all('td',{'class' : 'b-td-item'}))
+        'cinemas' : len(movie.parent.find_all('td',{'class' : 'b-td-item'}))
     } for movie in movies_info]
     return movies_dict
 
@@ -69,7 +69,7 @@ def output_movies_to_console(movies):
     for movie in movies:
         print(message.format(
             movie['name'],
-            movie['count'],
+            movie['cinemas'],
             movie['rating'],
             movie['voters_number']
         ))
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     print ('Получаем данные с afisha.ru.....')
     afisha_page = fetch_afisha_page('http://www.afisha.ru/msk/schedule_cinema/')
     afisha_list = parse_afisha_list(afisha_page)
-    print (sorted(afisha_list, key= lambda movie: movie['count'], reverse=True)[:10])
+    print (sorted(afisha_list, key= lambda movie: movie['cinemas'], reverse=True)[:10])
     print ('Получаем данные с kinopoisk.ru.....')
 
     for movie in afisha_list:
@@ -97,5 +97,5 @@ if __name__ == '__main__':
 
 
 
-    movies = sorted(afisha_list,key= lambda movie: float(movie['rating']) and movie['count'], reverse=True)[:10]
+    movies = sorted(afisha_list,key= lambda movie: float(movie['rating']) and movie['cinemas'], reverse=True)[:10]
     output_movies_to_console(movies)
