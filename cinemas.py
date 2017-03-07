@@ -11,6 +11,7 @@ def fetch_afisha_page(url):
 def parse_afisha_list(raw_html):
     soup = BeautifulSoup(raw_html,'html.parser')
     movies_info = soup.find_all('div',{'class' : 'm-disp-table'})
+    #add url
     movies_dict = [{
         'name' : movie.find('a').text,
         'url': movie.find('a').get('href'),
