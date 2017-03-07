@@ -13,6 +13,7 @@ def parse_afisha_list(raw_html):
     movies_info = soup.find_all('div',{'class' : 'm-disp-table'})
     movies_dict = [{
         'name' : movie.find('a').text,
+        'url': movie.find('a').get('href'),
         'cinemas' : len(movie.parent.find_all('td',{'class' : 'b-td-item'}))
     } for movie in movies_info]
     return movies_dict
